@@ -8,6 +8,22 @@ contract payRoll {
 	address staff = 0xca35b7d915458ef540ade6068dfe2f44e8fa733c ;
 	uint constant payDuration = 10 seconds;
 	uint lastPayday = now;
+	address admin;
+	
+	constructor() public {
+	    
+	    
+	    
+	    
+	    admin = msg.sender;
+	    
+	}
+	
+	modifier ownerOnly {
+	    
+	    require(msg.sender == admin);
+	    _;
+	}
 
 	//更改员工地址
 	function changeStaffAddress(address newAddress) {
@@ -15,13 +31,13 @@ contract payRoll {
 		staff = newAddress;
 	}
 
-	//更改员工薪水
-	function changeSalary(uint newSalary) {
+	//更改员工薪水，以ether为单位
+	function changeSalary(uint newSalary) ownerOnly {
 
-		salary = newSalary;
+		salary = newSalary * 10**18;
 	}
 
-	function addFund() payable returns(uint) {
+	function addFund() payable ownerOnly returns(uint) {
 
 		return this.balance;
 
