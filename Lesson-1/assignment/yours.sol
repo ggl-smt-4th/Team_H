@@ -2,15 +2,26 @@ pragma solidity ^0.4.14;
 
 contract Payroll {
     uint salary = 0;
+    address employer;
     address employee;
     uint constant payDuration = 10 seconds;
     uint lastPayday = now;
     
-    function setSalary (uint x) {
-        salary = x * 1 ether;
+    function Payroll() {
+        employer = msg.sender;
+    }
+    
+    function setSalary (uint s) {
+        if (msg.sender != employer) {
+            revert();
+        }
+        salary = s * 1 ether;
     }
     
     function setAddress (address add) {
+        if (msg.sender != employer) {
+            revert();
+        }
         employee = add;
     }
     
