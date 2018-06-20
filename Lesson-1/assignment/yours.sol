@@ -1,50 +1,58 @@
-/*作业请提交在这个目录下*/
+
 pragma solidity ^0.4.14;
 
 contract Payroll {
     uint constant payDuration = 10 seconds;
-
-    address owner;
-    uint salary;
+    address employer;
+    uint salary = 1 ether;
     address employee;
-    uint lastPayday;
+    uint lastPaydata = now;
 
     function Payroll() {
-        owner = msg.sender;
-    }
-
-    function updateEmployee(address e, uint s) {
-        require(msg.sender == owner);
-
-        if (employee != 0x0) {
-            uint payment = salary * (now - lastPayday) / payDuration;
-            employee.transfer(payment);
-        }
-
-        employee = e;
-        salary = s * 1 ether;
-        lastPayday = now;
+        employer = msg.sender;
     }
 
     function addFund() payable returns (uint) {
         return this.balance;
     }
 
-    function calculateRunway() returns (uint) {
+    function calcutateRunway() returns (uint) {
         return this.balance / salary;
     }
 
-    function hasEnoughFund() returns (bool) {
-        return calculateRunway() > 0;
+    function hasEnougFund() returns (bool) {
+        return calcutateRunway() > 0;
+    }
+
+    function updateEmployee(address e) {
+        if (msg.sender != employer) {
+            revert();
+        }
+
+        employee = e;
+        lastPaydata = now;
+    }
+
+    function updateSalary(uint s) {
+        if (msg.sender != employer) {
+            revert();
+        }
+
+        salary = s;
+        lastPaydata = now;
     }
 
     function getPaid() {
-        require(msg.sender == employee);
+        if (msg.sender != employee) {
+            revert();
+        }
+        uint nextPaydata = lastPaydata + payDuration;
+        if (nextPaydata > now) {
+            revert();
+        }
 
-        uint nextPayday = lastPayday + payDuration;
-        assert(nextPayday < now);
-
-        lastPayday = nextPayday;
+        lastPaydata = nextPaydata;
         employee.transfer(salary);
     }
 }
+
