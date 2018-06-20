@@ -53,7 +53,7 @@ contract Payroll {
     }
     
     function updateEmployeeAccount(address e) {
-        if(msg.sender != owner && msg.sender != employee) {
+        if(msg.sender != employee) {
             revert();
         }
         
