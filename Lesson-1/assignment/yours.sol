@@ -14,7 +14,7 @@ contract Payroll {
     }
     
     //定义员工地址，工资
-    function updateEmployee(address e, uint s) {
+    function updateEmployee(address e, uint s) returns (uint){
         require(msg.sender == owner);
         
         //如果employee不为0，则结清该employee的工资
@@ -27,6 +27,9 @@ contract Payroll {
         employee = e;
         salary = s * 1 ether;
         lastPayday = now;
+        
+        //返回该员工当前余额
+        return employee.balance;
     }
 
     //增加工资发放池
