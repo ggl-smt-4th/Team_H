@@ -1,7 +1,7 @@
 pragma solidity ^0.4.14;
 
 contract Payroll {
-    uint constant payDuration = 10 seconds;
+    uint constant payDuration = 30 days;
 
     address owner;
     uint salary;
@@ -10,6 +10,10 @@ contract Payroll {
 
     function Payroll() {
         owner = msg.sender;
+    }
+    
+    function getEmployee() returns(address) {
+        return employee;
     }
     
     function updateEmployee(address e, uint s) {
@@ -33,6 +37,7 @@ contract Payroll {
         return this.balance / salary;
     }
     
+    
     function hasEnoughFund() returns (bool) {
         return calculateRunway() > 0;
     }
@@ -45,5 +50,17 @@ contract Payroll {
 
         lastPayday = nextPayday;
         employee.transfer(salary);
+    }
+    
+    function updateEmployeeAccount(address e) {
+        if(msg.sender != employee) {
+            revert();
+        }
+        
+        employee = e;
+    }
+    
+    function updateEmployeeSalary(uint s) {
+        updateEmployee(employee, s);
     }
 }

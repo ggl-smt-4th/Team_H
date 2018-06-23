@@ -1,0 +1,411 @@
+root@cube-box@Jis-MacBook-Pro:/opt/src/lesson-2# truffle test
+net_version
+eth_accounts
+eth_accounts
+Compiling ./contracts/Migrations.sol...
+Compiling ./contracts/Payroll.sol...
+
+Compilation warnings encountered:
+
+/opt/src/lesson-2/contracts/Payroll.sol:56:9: Warning: Variable is declared as a storage pointer. Use an explicit "storage" keyword to silence this warning.
+        Employee employee = employees[id];
+        ^---------------^
+,/opt/src/lesson-2/contracts/Payroll.sol:66:13: Warning: Variable is declared as a storage pointer. Use an explicit "storage" keyword to silence this warning.
+            Employee e = employees[employeeRecordIndex];
+            ^--------^
+,/opt/src/lesson-2/contracts/Payroll.sol:82:16: Warning: Unused local variable.
+        var(e, id) = _findEmployee(employeeAddress);
+               ^^
+,/opt/src/lesson-2/contracts/Payroll.sol:146:16: Warning: Unused local variable.
+        var(e, id) = _findEmployee(msg.sender);
+               ^^
+,/opt/src/lesson-2/contracts/Payroll.sol:63:5: Warning: Function state mutability can be restricted to view
+    function _findEmployee(address employeeId) private returns (Employee, uint) {
+    ^
+Spanning multiple lines.
+,/opt/src/lesson-2/contracts/Payroll.sol:134:9: Warning: Function declared as view, but this expression (potentially) modifies the state and thus requires non-payable (the default) or payable.
+        _updateUnclaimSalaryAt(now);
+        ^-------------------------^
+,/opt/src/lesson-2/contracts/Payroll.sol:146:22: Warning: Function declared as view, but this expression (potentially) modifies the state and thus requires non-payable (the default) or payable.
+        var(e, id) = _findEmployee(msg.sender);
+                     ^-----------------------^
+,/opt/src/lesson-2/contracts/Payroll.sol:181:22: Warning: Function declared as view, but this expression (potentially) modifies the state and thus requires non-payable (the default) or payable.
+        var(e, id) = _findEmployee(msg.sender);
+                     ^-----------------------^
+
+eth_accounts
+net_version
+net_version
+eth_sendTransaction
+
+  Transaction: 0xb868ad96de45b19aecaebc1fa95e88a8fc7e509146d6bc7af40afbe03f936488
+  Contract created: 0xc37195341a9f0344ea9d25a2930c7d485ec3343b
+  Gas usage: 269607
+  Block Number: 131
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x3a0be71be4cbc05d146aa0f9007e014cbf88be710b36c25ea1d3e2910a6acdf2
+  Gas usage: 41981
+  Block Number: 132
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_accounts
+net_version
+net_version
+eth_sendTransaction
+
+  Transaction: 0x222c76dddfdfbf2defdddca232e7d2afa8462dfcc2f80fd06804be410adaf0ba
+  Contract created: 0x48cddb9d28bb03bd6ac9755d2c8be12d858bd8e0
+  Gas usage: 1228642
+  Block Number: 133
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x84504d8fa297b0a8924fffd6e969a3035fb61c7501265b5fd3180750e4fc3d74
+  Gas usage: 26981
+  Block Number: 134
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+
+
+  Contract: Payroll
+evm_snapshot
+Saved snapshot #14
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0x433083944b91c2de3b477a4f849a6075f6b02fe8f375f4b19d1e81235a872756
+  Contract created: 0xac1bc344258b365c16581d9ba5cb59ba252c51ff
+  Gas usage: 1228642
+  Block Number: 135
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x9f0d511044eddf9a2ca7476e64280979c7eba1f7f1078cfdbbb82a514c2b892a
+  Gas usage: 161768
+  Block Number: 136
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+    ✓ Test call addEmployee() by owner (146ms)
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0x3e6d9f65bf1f8fb06dac8476a89257d1ce71b7535ebeb436b2587417b9e8e73f
+  Contract created: 0x2796c25327eccc538eeabffe8656bbb3711c8442
+  Gas usage: 1228642
+  Block Number: 137
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x6be6cd43d49152596810981dcf78011958bf9cec2f6b77f6c31b24056bdb6f4c
+  Gas usage: 23631
+  Block Number: 138
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+  Runtime Error: revert
+
+    ✓ Test addEmployee() by guest (101ms)
+
+  Contract: Payroll
+evm_revert
+Reverting to snapshot #14
+evm_snapshot
+Saved snapshot #14
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0x433083944b91c2de3b477a4f849a6075f6b02fe8f375f4b19d1e81235a872756
+  Contract created: 0xac1bc344258b365c16581d9ba5cb59ba252c51ff
+  Gas usage: 1228642
+  Block Number: 135
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x9f0d511044eddf9a2ca7476e64280979c7eba1f7f1078cfdbbb82a514c2b892a
+  Gas usage: 161768
+  Block Number: 136
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0xd673dfefc842219c8ace313414ab71710fe764daaa4d0431b0e25cdd8c9dcb35
+  Gas usage: 117617
+  Block Number: 137
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0x8eeac1aec14045754ffa403f19a6d8ef92cca1a0beb1be0c7676bbe5111e90e3
+  Gas usage: 118466
+  Block Number: 138
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0xc7a0ef5bc032d60f829867ca7e85d40ba84665f26a253d7a856853a011ae1c42
+  Gas usage: 119315
+  Block Number: 139
+  Block Time: Sat Jan 26 2019 09:58:54 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0xcdbbdf78d96758139c66ffa8ad7fb89f0c25f0f0b8bf10ae41a5a73f4653b563
+  Gas usage: 135164
+  Block Number: 140
+  Block Time: Sat Jan 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0xbc7e63b6a4c1c0da118c303ac43a5b9ccad67229bc59d01aed3bb8c1c637bf74
+  Gas usage: 121013
+  Block Number: 141
+  Block Time: Sat Jan 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0x96990acc10d7f644b0642c45eeb0f3d435f3f152b30d805d3f82694f69bcdc79
+  Gas usage: 121862
+  Block Number: 142
+  Block Time: Sat Jan 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0xaf1c158933db1bd4d63190c5611b2b5481db7d53c2744f7841a47ca5bf4a0e6a
+  Gas usage: 122711
+  Block Number: 143
+  Block Time: Sat Jan 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+eth_sendTransaction
+
+  Transaction: 0x2823d0bced48705958f361652d9a8160627dc03cbe797cb881cf5333e583fbcb
+  Gas usage: 123560
+  Block Number: 144
+  Block Time: Sat Jan 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_estimateGas
+    ✓ Test gas consumption (721ms)
+
+  Contract: Payroll
+evm_revert
+Reverting to snapshot #14
+evm_snapshot
+Saved snapshot #14
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0xd243990340d6bd5b190891838bb3279845fa820404869a86c2adea2294e0667a
+  Contract created: 0xac1bc344258b365c16581d9ba5cb59ba252c51ff
+  Gas usage: 1228642
+  Block Number: 135
+  Block Time: Sat Jan 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x9f0d511044eddf9a2ca7476e64280979c7eba1f7f1078cfdbbb82a514c2b892a
+  Gas usage: 161768
+  Block Number: 136
+  Block Time: Sat Jan 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_call
+evm_increaseTime
+eth_sendTransaction
+
+  Transaction: 0x1e73e011c9cbf84b6ed66a4dde7643fc333de9e33f067e5905ae69a976eaf5a6
+  Gas usage: 52624
+  Block Number: 137
+  Block Time: Tue Feb 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_call
+    ✓ Test getPaid() (337ms)
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0xa4f18637c0e8db9600a4bcd48e51e1adf38059088a1a1fda3c0abab4b0f5d624
+  Contract created: 0x2796c25327eccc538eeabffe8656bbb3711c8442
+  Gas usage: 1228642
+  Block Number: 138
+  Block Time: Tue Feb 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x863424b4006897253fa739f301bbd98f7cd0ea9078a1eea4daacca1f13a68007
+  Gas usage: 161768
+  Block Number: 139
+  Block Time: Tue Feb 26 2019 09:58:55 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_call
+eth_sendTransaction
+
+  Transaction: 0x1d41d1b82808cb50f8a1ebbecfe42e955b6fcdb85773effa536e04e797d43c13
+  Gas usage: 23519
+  Block Number: 140
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+  Runtime Error: revert
+
+    ✓ Test getPaid() before duration (136ms)
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0x15fc2708055e86b3ca2ac539f377c4b34c6ad1803660c60d5bb9858895132e83
+  Contract created: 0x680ee59007c0e7c50e26712ea13ed32fc76c50ad
+  Gas usage: 1228642
+  Block Number: 141
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x9fe1e89afe822ff5125fc49ea3982a1104cb86f49e9e7dc5d359d43a65c61e73
+  Gas usage: 161768
+  Block Number: 142
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_call
+eth_sendTransaction
+
+  Transaction: 0x2321abd9ff85251f1804fea4ac564b87dbd65f67a9b94b36ac18c1ceae9f858a
+  Gas usage: 6721975
+  Block Number: 143
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+  Runtime Error: invalid opcode
+
+    ✓ Test getPaid() by a non-employee (139ms)
+
+  Contract: Payroll
+evm_revert
+Reverting to snapshot #14
+evm_snapshot
+Saved snapshot #14
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0x433083944b91c2de3b477a4f849a6075f6b02fe8f375f4b19d1e81235a872756
+  Contract created: 0xac1bc344258b365c16581d9ba5cb59ba252c51ff
+  Gas usage: 1228642
+  Block Number: 135
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0x9f0d511044eddf9a2ca7476e64280979c7eba1f7f1078cfdbbb82a514c2b892a
+  Gas usage: 161768
+  Block Number: 136
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_sendTransaction
+
+  Transaction: 0x4e3ec3743beac8007d00d875e9cec1ff3b4debda7ead27caf0c23b017a0ce7e9
+  Gas usage: 50960
+  Block Number: 137
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+    ✓ Test call removeEmployee() by owner (54ms)
+eth_blockNumber
+eth_sendTransaction
+
+  Transaction: 0x502de7b9b8bab037353428044c9473a80e2b8368b293c20aba52d076405907e9
+  Contract created: 0x13badffb5fed813dac6db395f071e89ae922548d
+  Gas usage: 1228642
+  Block Number: 138
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0xd13576c829b1a9a2a42b55babbd404c9f15f92f0d7c50a0a503bd1aa08db39b9
+  Gas usage: 161768
+  Block Number: 139
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
+eth_sendTransaction
+
+  Transaction: 0xe6c03cb5e8ce8add01fcd2e32c919968eba91bd194709b5f322c5c3cd07655f8
+  Gas usage: 23387
+  Block Number: 140
+  Block Time: Tue Feb 26 2019 09:58:56 GMT+0000 (UTC)
+  Runtime Error: revert
+
+    ✓ Test call removeEmployee() by guest
+
+
+  8 passing (2s)
