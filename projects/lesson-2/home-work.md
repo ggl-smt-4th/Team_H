@@ -25,7 +25,10 @@
 
 ## calculatRunway的GAS优化思路
 消除循环：
-记下来salary amount，每次增删改员工的时候修改；，在求runway的时候和balance做除法，这样就从O(n)-->O(1)
+
+记下来salary amount，每次增删改员工的时候修改；，在求runway的时候和balance做除法。
+
+这样就从O(n)-->O(1)
 
 ## calculateRunway 的合理计算
 根据不同case计算：
