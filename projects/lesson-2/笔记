@@ -28,10 +28,24 @@ require()
 
 
 ### 三、数据存储
+http://me.tryblockchain.org/solidity-data-location.html
 
-storage
-memory
-calldata
+storage 永久性空间
+memory 临时空间
+calldata 类似memory
+
+规定：
+  状态变量：storage；
+  function输入函数：calldata；
+  function返回参数：memory
+  本地变量：storage
+  
+规则：
+相同存储空间变量赋值
+  传递reference（EVM上的内存地址）
+不同存储空间变量赋值
+  拷贝
+  
 
 
 ### 四、遍历循环
