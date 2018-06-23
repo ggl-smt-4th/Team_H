@@ -21,6 +21,8 @@ contract Payroll {
     
     UnclaimedSalary unclaimedSalary;
     
+    uint totalSalary;
+    
     function _initUnclaimedSalary() private {
         unclaimedSalary.pool = 0x0;
         unclaimedSalary.totalSalary = 0x0;
@@ -71,6 +73,7 @@ contract Payroll {
     function Payroll() payable public {
         owner = msg.sender;
         _initUnclaimedSalary();
+        totalSalary = 0;
     }
 
     function addEmployee(address employeeAddress, uint salary) public {
@@ -83,6 +86,7 @@ contract Payroll {
         uint salaryEther = salary * 1 ether;
         employees.push(Employee({id:employeeAddress, salary:salaryEther, lastPayday:addTime}));
         _updateEmployeeSalaryAt(addTime, 0, salaryEther);
+        totalSalary += salaryEther;
     }
 
     function removeEmployee(address employeeId) public {
@@ -93,11 +97,13 @@ contract Payroll {
         
         _partialPaid(id);
         _updateEmployeeSalaryAt(unclaimedSalary.lastUpdateTime, e.salary, 0);
+        totalSalary -= e.salary;
         delete employees[id];
         employees.length --;
         if(id != employees.length) {
             employees[id] = employees[employees.length];
         }
+        
     }
 
     function updateEmployee(address employeeAddress, uint salary) public {
@@ -108,6 +114,7 @@ contract Payroll {
         
         _partialPaid(id);
         _updateEmployeeSalaryAt(employees[id].lastPayday, employees[id].salary, salary);
+        totalSalary = totalSalary - e.salary + salary;
         employees[id].salary = salary;
         
     }
@@ -117,17 +124,13 @@ contract Payroll {
     }
 
     function calculateRunway() public view returns (uint) {
-        _updateUnclaimSalaryAt(now);
-        if(unclaimedSalary.totalSalary == 0) {
+        if(totalSalary == 0) {
             return this.balance;
         }
-        if(unclaimedSalary.pool > this.balance) {
-            return 0;
-        } 
-        return (this.balance) / unclaimedSalary.totalSalary;
+        return (this.balance) / totalSalary;
     }
 
-    function calculateRunway_pro() public view returns (uint) {
+    function calculateRunway_pro_uncheck() public view returns (uint) {
         _updateUnclaimSalaryAt(now);
         if(msg.sender == owner) {
             if(unclaimedSalary.pool > this.balance) {
