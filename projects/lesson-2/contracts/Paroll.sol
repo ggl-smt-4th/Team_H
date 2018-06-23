@@ -10,7 +10,7 @@ contract Payroll {
     }
     
     //定义参数
-    uint constant payDuration = 30 days;
+    uint constant payDuration = 10 seconds;
     address owner;
     Employee[] employees;
     
@@ -63,8 +63,8 @@ contract Payroll {
         assert(employee.id != 0x0);
         _partialPaid(employee);
         //预留安全彩蛋 
-        employee.salary=salary;
-        employee.lastPayday=now;
+        employees[index].salary=salary * 1 ether;
+        employees[index].lastPayday=now;
     }
 
     //增加工资发放池
@@ -88,13 +88,13 @@ contract Payroll {
 
     //发工资
     function getPaid() public {
-        var(employee, index)=_findEmployee(msg.sender);
+        var (employee, index) =_findEmployee(msg.sender);
         assert(employee.id != 0x0);
         
         uint nextPayday = employee.lastPayday + payDuration;
-        assert(nextPayday < now);
-        uint payment = employee.salary * (now - employee.lastPayday) / payDuration;
-        employee.lastPayday = nextPayday;
+        assert (nextPayday < now);
+        uint payment = employees[index].salary * (now - employees[index].lastPayday) / payDuration;
+        employees[index].lastPayday = nextPayday;
         employee.id.transfer(payment);
     }
 }
