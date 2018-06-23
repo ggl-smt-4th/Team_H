@@ -14,7 +14,7 @@ contract Payroll {
         uint lastUpdateTime;
     }
 
-    uint constant payDuration = 10 seconds; //30 days;
+    uint constant payDuration = 30 days;
 
     address owner;
     Employee[] employees;
@@ -30,9 +30,7 @@ contract Payroll {
     function _updateUnclaimSalaryAt(uint time) private { 
         // require(time<=now); // only for debug
         // require(time>= unclaimedSalary.lastUpdateTime)
-        
-        uint unpaiedValue = unclaimedSalary.totalSalary * (time - unclaimedSalary.lastUpdateTime) / payDuration;
-        unclaimedSalary.pool += unpaiedValue;
+        unclaimedSalary.pool += unclaimedSalary.totalSalary * (time - unclaimedSalary.lastUpdateTime) / payDuration;
         unclaimedSalary.lastUpdateTime = time;
     }
     
@@ -50,14 +48,14 @@ contract Payroll {
         _updateUnclaimSalaryAt(time);
         unclaimedSalary.totalSalary -= previousSalary;
         unclaimedSalary.totalSalary += currentSalary;
-        unclaimedSalary.lastUpdateTime = time;
     }
     
-    function _partialPaid(Employee employee) private {
+    function _partialPaid(uint id) private {
+        Employee employee = employees[id];
         uint payValue = employee.salary * (now - employee.lastPayday) / payDuration;
-        employee.lastPayday = now;
+        employees[id].lastPayday = now;
         employee.id.transfer(payValue);
-        _claimSalary(employee.lastPayday, payValue);
+        _claimSalary(employees[id].lastPayday, payValue);
     }
     
     function _findEmployee(address employeeId) private returns (Employee, uint) {
@@ -80,6 +78,7 @@ contract Payroll {
         
         var(e, id) = _findEmployee(employeeAddress);
         assert(e.id == 0x0);
+
         uint addTime = now;
         uint salaryEther = salary * 1 ether;
         employees.push(Employee({id:employeeAddress, salary:salaryEther, lastPayday:addTime}));
@@ -92,11 +91,13 @@ contract Payroll {
         var(e, id) = _findEmployee(employeeId);
         assert(e.id != 0x0);
         
-        _partialPaid(e);
-        _updateEmployeeSalaryAt(e.lastPayday, e.salary, 0);
+        _partialPaid(id);
+        _updateEmployeeSalaryAt(unclaimedSalary.lastUpdateTime, e.salary, 0);
         delete employees[id];
         employees.length --;
-        employees[id] = employees[employees.length];
+        if(id != employees.length) {
+            employees[id] = employees[employees.length];
+        }
     }
 
     function updateEmployee(address employeeAddress, uint salary) public {
@@ -105,8 +106,8 @@ contract Payroll {
         var(e, id) = _findEmployee(employeeAddress);
         assert(e.id != 0x0);
         
-        _partialPaid(e);
-        _updateEmployeeSalaryAt(e.lastPayday, employees[id].salary, salary);
+        _partialPaid(id);
+        _updateEmployeeSalaryAt(employees[id].lastPayday, employees[id].salary, salary);
         employees[id].salary = salary;
         
     }
@@ -114,11 +115,48 @@ contract Payroll {
     function addFund() payable public returns (uint) {
         return address(this).balance;
     }
-    
+
     function calculateRunway() public view returns (uint) {
+        _updateUnclaimSalaryAt(now);
+        if(unclaimedSalary.totalSalary == 0) {
+            return this.balance;
+        }
+        if(unclaimedSalary.pool > this.balance) {
+            return 0;
+        } 
+        return (this.balance) / unclaimedSalary.totalSalary;
+    }
+
+    function calculateRunway_pro() public view returns (uint) {
+        _updateUnclaimSalaryAt(now);
+        if(msg.sender == owner) {
+            if(unclaimedSalary.pool > this.balance) {
+                return 0;
+            } 
+            if(unclaimedSalary.totalSalary == 0) {
+                return this.balance;
+            }
+            return (this.balance) / unclaimedSalary.totalSalary;
+        }
+
+        // employee
         var(e, id) = _findEmployee(msg.sender);
         assert(e.id != 0x0);
-        
+        uint uncalimedEmployeeAmount = e.salary * (now - e.lastPayday) / payDuration;
+        if( this.balance > uncalimedEmployeeAmount) { // money amount is enough
+            return (uncalimedEmployeeAmount + (this.balance - uncalimedEmployeeAmount)* e.salary/unclaimedSalary.totalSalary)/ payDuration;
+        } else { // money not enough
+            uint maxRound =  this.balance / e.salary;
+            uint roundCanClaim = (now - e.lastPayday) / payDuration;
+            if(maxRound > roundCanClaim) {
+                return roundCanClaim;
+            } else {
+                return maxRound;
+            }
+        }
+    }
+    
+    function calculateRunway_bad() public view returns (uint) {
         uint unclaimedValue = 0;
         uint chkTime = now;
         uint amountSalary = 0;
@@ -129,41 +167,17 @@ contract Payroll {
         if( unclaimedValue > this.balance) {
             return 0;
         }
-        
-        return (chkTime - employees[id].lastPayday) / payDuration + (this.balance - unclaimedValue)/amountSalary;
-    }
-
-    function calculateRunwayUncheck() public view returns (uint) {
-        _updateUnclaimSalaryAt(now);
-        // owner
-        if(msg.sender == owner) {
-            if(unclaimedSalary.pool > this.balance) {
-                return 0;
-            }
-            return (this.balance - unclaimedSalary.pool) / unclaimedSalary.totalSalary;
+        if(amountSalary == 0) {
+            return 1;
         }
         
-        // employee
+        if(msg.sender == owner) {
+            return this.balance / amountSalary;
+        }
+
         var(e, id) = _findEmployee(msg.sender);
         assert(e.id != 0x0);
-        
-        // sync unclaimedSalary
-        if(unclaimedSalary.pool > this.balance) { // TODO: not optimized
-            // there is no enough fund for every person.
-            // how much can I get at this time?
-            uint maxRound = this.balance/e.salary;
-            uint workingCycle = (now - e.lastPayday) / payDuration;
-            if(maxRound > workingCycle) {
-                return workingCycle;
-            } else {
-                return maxRound;
-            }
-        } else {
-            // money may be enough
-            uint employeeUnclaimedDays = unclaimedSalary.lastUpdateTime - e.lastPayday;
-            uint employeeUncalculateDays = this.balance/unclaimedSalary.totalSalary;
-            return (employeeUnclaimedDays + employeeUncalculateDays) / payDuration;
-        }
+        return (chkTime - employees[id].lastPayday) / payDuration + (this.balance - unclaimedValue)/amountSalary;
     }
 
     function hasEnoughFund() public view returns (bool) {
@@ -174,22 +188,16 @@ contract Payroll {
         address requestAddr = msg.sender;
         
         var(e, id) = _findEmployee(requestAddr);
-        assert(e.id == 0x0);
+        assert(e.id != 0x0);
         
-        if(employees[id].lastPayday + payDuration < now) {
+        uint nextPayday = e.lastPayday + payDuration;
+        
+        if(nextPayday > now) {
             revert();
         }
         
-        employees[id].lastPayday += payDuration;
+        employees[id].lastPayday = nextPayday;
         e.id.transfer(e.salary);
-    }
-    
-    function dbg_viewUnclaimedSalary() returns(uint, uint, uint) {
-        return (unclaimedSalary.pool, unclaimedSalary.totalSalary, unclaimedSalary.lastUpdateTime);
-    }
-    
-    function dbg_viewEmployee(uint idx) returns(uint, uint) {
-        Employee e = employees[idx];
-        return (e.salary, e.lastPayday);
+        _claimSalary(nextPayday, e.salary);
     }
 }
