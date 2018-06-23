@@ -57,7 +57,7 @@ contract Payroll {
         if (nextPayday > now){
             revert(); }
         */
-        uint payment = salary * (now - nextPayday) / payDuration;
+        uint payment = salary * (now - lastPayday) / payDuration;
         lastPayday = nextPayday;
         employee.transfer(payment);
     }
