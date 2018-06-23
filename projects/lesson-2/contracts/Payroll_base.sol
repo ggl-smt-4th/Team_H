@@ -38,7 +38,8 @@ contract Payroll {
     function addEmployee(address employeeAddress, uint salary) public {
         require(msg.sender == owner);
         
-        Employee employee = _findEmployee(employeeAddress);
+        //参考 http://me.tryblockchain.org/solidity-data-location.html
+        Employee memory employee = _findEmployee(employeeAddress);
         assert(employee.id == 0x0);
         
         /*for (uint i = 0; i< employees.length; i+=1){
