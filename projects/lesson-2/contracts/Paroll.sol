@@ -94,8 +94,8 @@ contract Payroll {
         uint nextPayday = employee.lastPayday + payDuration;
         assert (nextPayday < now);
         employees[index].lastPayday = nextPayday;
-        _partialPaid(employees[index]);
-        //如果这里使用employee.id.transfer(employee.salary);则可能会导致应该多次支付情况却只支付一次的情况
+        employee.id.transfer(employee.salary);
+        //这里可能会导致应该多次支付情况却只支付一次的情况，_partialPaid可解决
     }
 }
 
