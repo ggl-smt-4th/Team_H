@@ -2,7 +2,7 @@
 1. 使用modifier判断  
 2. 使用safeMath计算  
 
-## 函数调用gas花费
+## 函数调用gas花费 以及截图
 
 | Function Name | Transaction cost | Execution Cost |
 | - | - | - |
@@ -20,7 +20,9 @@
 | hasEnoughFund | 22239 | 967 |
 | getPaid | 35641 | 14369 |
 
-* 截图太痛苦
+* 截图
+![](https://github.com/renaissanxe/Team_H/raw/074_%E6%9D%A8%E9%AA%A5/projects/lesson-3/calling1.jpg)
+![](https://github.com/renaissanxe/Team_H/raw/074_%E6%9D%A8%E9%AA%A5/projects/lesson-3/calling2.jpg)
 
 ## C3 Lineraization 继承顺序
 
