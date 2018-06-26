@@ -12,6 +12,7 @@ contract Payroll {
 
     address owner;
     Employee[] employees;
+    uint totalSalary;
 
     //构造器，保证owner == 合约创建者
     function Payroll() payable public {
@@ -42,14 +43,7 @@ contract Payroll {
     }
 
     //计算剩余资金足以支付的周期
-    function calculateRunway() returns(uint) {
-
-        uint totalSalary = 0;
-
-        for (uint i = 0; i < employees.length; i++) {
-
-            totalSalary += employees[i].salary;
-        }
+    function calculateRunway() public view returns(uint) {
 
         return this.balance / totalSalary;
     }
@@ -81,7 +75,9 @@ contract Payroll {
         assert(employee.employeeAddress != 0x0);
 
         _partialPay(employee);
+        totalSalary -= employee.salary;
         employee.salary = salary;
+        totalSalary += salary;
         employee.lastPayDay = now;
 
     }
@@ -93,8 +89,8 @@ contract Payroll {
         var(employee, index) = _findEmployee(employeeAddress);
         assert(employee.employeeAddress == 0x0);
 
-        employees.push(Employee(employeeAddress, salary, now));
-        // TODO: your code here
+        employees.push(Employee(employeeAddress, salary * 1 ether, now));
+        totalSalary += salary;// TODO: your code here
     }
 
     //移除元组中的员工
@@ -104,7 +100,7 @@ contract Payroll {
         assert(employee.employeeAddress != 0x0);
 
         _partialPay(employee);
-
+        totalSalary -= employee.salary;
         delete employees[index];
         employees[index] = employees[employees.length -1];
         employees.length -= 1;
