@@ -18,6 +18,12 @@ contract Payroll is Ownable {
     address owner;
 
     mapping (address => Employee) employees;
+    
+    function _partialPay(address employeeId) private {
+
+        uint payment = employees[employeeId].salary * (now - employees[employeeId].lastPayday) / payDuration;
+        employees[employeeId].id.transfer(payment);
+    }    
 
     //构造器
     function Payroll() payable public {
@@ -39,6 +45,7 @@ contract Payroll is Ownable {
 
     function removeEmployee(address employeeId) public checkEmployee(employeeId) onlyOwner {
         
+        _partialPay(employeeId);
         delete employees[employeeId];// TODO: your code here
     }
 
@@ -49,7 +56,10 @@ contract Payroll is Ownable {
 
     function updateEmployee(address employeeId, uint salary) public checkEmployee(employeeId) onlyOwner {
         
-        employees[employeeId].salary = salary;// TODO: your code here
+        _partialPay(employeeId);
+        employees[employeeId].salary = salary;
+        employees[employeeId].lastPayday = now;
+        // TODO: your code here
     }
 
     function addFund() payable public returns (uint) {
