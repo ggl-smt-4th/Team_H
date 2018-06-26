@@ -31,3 +31,34 @@ function calculateRunway() returns(uint) {
 
         return this.balance / totalSalary;
     }
+ 4.在removeEmployee()中修改totalSalary,最终如下：
+     function removeEmployee(address employeeAddress) public {
+        require(msg.sender == owner);
+        var(employee, index) = _findEmployee(employeeAddress);
+        assert(employee.employeeAddress != 0x0);
+
+        _partialPay(employee);
+        totalSalary -= employee.salary;
+        delete employees[index];
+        employees[index] = employees[employees.length -1];
+        employees.length -= 1;
+
+
+            }
+        }
+
+5.在updateEmployee()中修改totalSalary，最终如下：
+    function updateEmployee(address employeeAddress, uint salary) {
+
+        require(msg.sender == owner);
+
+        var (employee, index) = _findEmployee(employeeAddress);
+        assert(employee.employeeAddress != 0x0);
+
+        _partialPay(employee);
+	totalSalary -= salary;
+        employee.salary = salary;
+	totalSalary += salary;
+        employee.lastPayDay = now;
+
+    }
