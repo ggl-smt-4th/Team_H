@@ -20,22 +20,19 @@ contract Payroll is Ownable {
     
     modifier employeeExist (address employeeId) {
         var employee = employees[employeeId];
-        assert (employee.id == 0x0);
+        assert (employee.id != 0x0);
         _;
     }
     
-    modifier partialPaid (address employeeId){
-        var employee = employees[employeeId];
-        _partialPaid(employee);
-        _;
-    }
     
     function _partialPaid(Employee employee) private {
         uint payment = employee.salary * (now - employee.lastpayday)/payDuration;
         employee.id.transfer(payment);
     }
     
-    function addEmployee(address employeeId, uint salary) public onlyOwner employeeExist(employeeId) {
+    function addEmployee(address employeeId, uint salary) public onlyOwner {
+        var employee = employees[employeeId];
+        assert (employee.id == 0x0);
         employees[employeeId] = Employee (employeeId, salary* 1 ether, now);
         totalSalary += employees[employeeId].salary;
     }
@@ -47,7 +44,7 @@ contract Payroll is Ownable {
         delete employees[employeeId];
     }
 
-    function changePaymentAddress(address oldAddress, address newAddress) public {
+    function changePaymentAddress(address oldAddress, address newAddress) public onlyOwner employeeExist(oldAddress) {
         var employee = employees[oldAddress];
         _partialPaid(employee);
         employees[newAddress] = Employee (newAddress, employees[oldAddress].salary, now);
