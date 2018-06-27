@@ -45,6 +45,7 @@ contract Payroll is Ownable {
     }
 
     function changePaymentAddress(address oldAddress, address newAddress) public onlyOwner employeeExist(oldAddress) {
+        require (oldAddress != newAddress);
         var employee = employees[oldAddress];
         _partialPaid(employee);
         employees[newAddress] = Employee (newAddress, employees[oldAddress].salary, now);
