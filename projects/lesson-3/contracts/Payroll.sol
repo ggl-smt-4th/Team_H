@@ -13,10 +13,9 @@ contract Payroll is Ownable {
         uint lastPayday;// TODO, your code here
     }
 
-    uint constant payDuration = 30 days;
+    uint constant payDuration = 10 seconds;
     uint public totalSalary = 0;
     address owner;
-
     mapping (address => Employee) employees;
     
     function _partialPay(address employeeId) private {
@@ -37,9 +36,11 @@ contract Payroll is Ownable {
         _;    
     }
     //增加员工
-    function addEmployee(address employeeId, uint salary) public checkEmployee(employeeId) onlyOwner  {
-        
-        employees[employeeId] = Employee(employeeId, salary, now);
+    function addEmployee(address employeeId, uint salary) public onlyOwner  {
+
+        require(employees[employeeId].id == 0x0);
+        salary = salary * 1 ether;
+        employees[employeeId] = Employee(employeeId, salary , now);
         totalSalary += salary;// TODO: your code here
     }
 
@@ -49,15 +50,17 @@ contract Payroll is Ownable {
         delete employees[employeeId];// TODO: your code here
     }
 
-    function changePaymentAddress(address oldAddress, address newAddress) public checkEmployee(oldAddress) onlyOwner {
+    function changePaymentAddress(address newAddress) public checkEmployee(msg.sender) {
         
-        employees[oldAddress].id = newAddress;// TODO: your code here
+        require(employees[newAddress].id == 0x0);
+        employees[newAddress] = Employee(newAddress,employees[msg.sender].salary, employees[msg.sender].lastPayday);
+        delete employees[msg.sender];// TODO: your code here
     }
 
     function updateEmployee(address employeeId, uint salary) public checkEmployee(employeeId) onlyOwner {
         
         _partialPay(employeeId);
-        employees[employeeId].salary = salary;
+        employees[employeeId].salary = salary * 1 ether;
         employees[employeeId].lastPayday = now;
         // TODO: your code here
     }
@@ -69,20 +72,22 @@ contract Payroll is Ownable {
 
     function calculateRunway() public view returns (uint) {
         
-        return address(this).balance / totalSalary;// TODO: your code here
+        return address(this).balance / totalSalary; // TODO: your code here
     }
 
     function hasEnoughFund() public view returns (bool) {
         
-        return (calculateRunway() > 0);// TODO: your code here
+        return (calculateRunway() > 0); // TODO: your code here
     }
 
     function getPaid() public checkEmployee(msg.sender) {
         
-        uint nextPayDay = employees[msg.sender].lastPayday + payDuration;
-        assert(nextPayDay < now);
+        var employee = employees[msg.sender];
 
-        employees[msg.sender].lastPayday = nextPayDay;
-        employees[msg.sender].id.transfer(employees[msg.sender].salary);// TODO: your code here
+        uint nextPayday = employee.lastPayday + payDuration;
+        assert(nextPayday < now);
+
+        employees[msg.sender].lastPayday = nextPayday;
+        employee.id.transfer(employee.salary);// TODO: your code here
     }
 }
