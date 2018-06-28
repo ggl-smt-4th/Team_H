@@ -40,9 +40,9 @@ contract Payroll is Ownable {
         
         var employee = employees[employeeId];
         require(employee.id == 0x0);
-
-        employees[employeeId] = Employee(employeeId, salary * 1 ether , now);
-        totalSalary += salary * 1 ether;// TODO: your code here
+        salary = salary.mul(1 ether);
+        employees[employeeId] = Employee(employeeId, salary, now);
+        totalSalary += salary;// TODO: your code here
     }
 
     function removeEmployee(address employeeId) public checkEmployee(employeeId) onlyOwner {
@@ -51,13 +51,15 @@ contract Payroll is Ownable {
         delete employees[employeeId];// TODO: your code here
     }
 
-    function changePaymentAddress(address newAddress) public checkEmployee(msg.sender) {
+    function changePaymentAddress(address oldAddress, address newAddress) public checkEmployee(msg.sender) {
         
         var employee = employees[newAddress];
         require(employee.id == 0x0);
-        var oldEmployee = employees[msg.sender];
-        employees[newAddress] = Employee(newAddress, oldEmployee.salary, oldEmployee.lastPayday);
-        delete employees[msg.sender];// TODO: your code here
+        var oldEmployee = employees[oldAddress];
+        _partialPaid(oldAddress);
+        
+        employees[newAddress] = Employee(newAddress, oldEmployee.salary, now);
+        delete employees[oldAddress];// TODO: your code here
     }
 
     function updateEmployee(address employeeId, uint salary) public checkEmployee(employeeId) onlyOwner {
