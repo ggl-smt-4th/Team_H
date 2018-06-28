@@ -51,7 +51,7 @@ contract Payroll is Ownable {
         delete employees[employeeId];// TODO: your code here
     }
 
-    function changePaymentAddress(address oldAddress, address newAddress) public checkEmployee(msg.sender) {
+    function changePaymentAddress(address oldAddress, address newAddress) public checkEmployee(oldAddress) {
         
         var employee = employees[newAddress];
         require(employee.id == 0x0);
