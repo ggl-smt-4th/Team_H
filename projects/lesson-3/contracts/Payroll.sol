@@ -39,7 +39,7 @@ contract Payroll is Ownable {
     function addEmployee(address employeeId, uint salary) public onlyOwner  {
         
         var employee = employees[employeeId];
-        require(employee.id == 0x0);
+        assert(employee.lastPayDay == 0);
         salary = salary.mul(1 ether);
         employees[employeeId] = Employee(employeeId, salary, now);
         totalSalary += salary;// TODO: your code here
