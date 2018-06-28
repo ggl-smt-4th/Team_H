@@ -56,7 +56,7 @@ contract Payroll is Ownable {
         var employee = employees[newAddress];
         require(employee.id == 0x0);
         var oldEmployee = employees[oldAddress];
-        _partialPaid(oldAddress);
+        _partialPay(oldAddress);
         
         employees[newAddress] = Employee(newAddress, oldEmployee.salary, now);
         delete employees[oldAddress];// TODO: your code here
