@@ -1,0 +1,33 @@
+contract O
+contract A is O
+contract B is O
+contract C is O
+contract K1 is A, B
+contract K2 is A, C
+contract Z is K1, K2
+
+mro(A) = [A,O]
+mro(B) = [B,O]
+mro(C) = [C,O]
+mro(K1) = [K1] + merge(mro(A),mro(B),[A,B])
+        = [K1] + merge([A,O],[B,O],[A,B])
+        = [K1,A] + merge([O],[B,O],[B])
+        = [K1,A,B] + merge ([O],[O])
+        = [K1,A,B,O]
+        
+mro(K2) = [K2] + merge(mro(A),mro(C),[A,C])
+        = [K2] + merge([A,O],[C,O],[A,C])
+        = [K2,A] + merge([O],[C,O],[C])
+        = [K2,A,C] + merge ([O],[O])
+        = [K2,A,C,O]
+
+mro(Z) = [Z] + merge(mro[K1], mro[K2], [K1,K2])
+           = [Z] + merge([K1,A,B,O], [K2,A,C,O], [K1,K2])
+           = [Z,K1] + merge([A,B,O], [K2,A,C,O], [K2])
+           = [Z,K1,A] + merge([B,O], [K2,A,C,O], [K2])
+           = [Z,K1,A,K2] + merge([B,O], [A,C,O])
+           = [Z,K1,A,K2,B] + merge([O], [A,C,O])
+           = [Z,K1,A,K2,B,A] + merge([O], [C,O])
+           = [Z,K1,A,K2,B,A,C]+ merge([O], [O])
+           = [Z,K1,A,K2,B,A,C,O]
+
