@@ -62,9 +62,9 @@ contract Payroll {
 
         uint nextPayDay = employee.lastPayDay + payDuration;
         assert(nextPayDay < now);
-
-        employee.lastPayDay = nextPayDay;
-        employee.employeeAddress.transfer(employee.salary);
+    //修改-0628
+        employees[index].lastPayDay = nextPayDay;
+        employees[index].employeeAddress.transfer(employee.salary);
     }
 
     function updateEmployee(address employeeAddress, uint salary) {
