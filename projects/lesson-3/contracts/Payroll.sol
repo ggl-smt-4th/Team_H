@@ -15,7 +15,7 @@ contract Payroll is Ownable {
         
     }
     
-    uint constant payDuration = 10 seconds;
+    uint constant payDuration = 30 days;
     uint public totalSalary;
 
 
