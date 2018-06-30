@@ -15,7 +15,7 @@ contract Payroll is Ownable {
         
     }
     
-    uint constant payDuration = 30 days;
+    uint constant payDuration = 10 seconds;
     uint public totalSalary;
 
 
@@ -38,7 +38,7 @@ contract Payroll is Ownable {
     }
     
     function _partialPaid(Employee employee) private {
-        uint payment = employee.salary * (now - employee.lastPayday) / payDuration;
+        uint payment = employee.salary.mul(now.sub(employee.lastPayday)).div(payDuration);
         employee.id.transfer(payment);
     }
     
@@ -51,8 +51,8 @@ contract Payroll is Ownable {
         var employee = employees[employeeId];
         assert(employee.id == 0x0);
         
-        totalSalary += salary * 1 ether;
-        employees[employeeId] = Employee(employeeId, salary * 1 ether, now);
+        totalSalary = totalSalary.add(salary.mul(1 ether));
+        employees[employeeId] = Employee(employeeId, salary.mul(1 ether), now);
         
     }
 
@@ -64,16 +64,20 @@ contract Payroll is Ownable {
         //assert(employee.id != 0x0);
         
         _partialPaid(employee);
-        totalSalary -= employees[employeeId].salary;
+        totalSalary = totalSalary.sub(employees[employeeId].salary);
         delete employees[employeeId];
     }
     
-    function changePaymentAddress(address oldAddress, address newAddress) public onlyOwner employeeExist(oldAddress) {
+    function changePaymentAddress(address oldAddress, address newAddress) public employeeExist(oldAddress) {
         // TODO: your code here
+        require(msg.sender == owner || msg.sender == oldAddress);
         
         var employee = employees[oldAddress];
         
-        employee.id = newAddress;
+        _partialPaid(employee);
+        
+        employees[newAddress] = employees[oldAddress];
+        delete employees[oldAddress];
     }
 
     function updateEmployee(address employeeId, uint salary) public onlyOwner employeeExist(employeeId) {
@@ -83,10 +87,10 @@ contract Payroll is Ownable {
         var employee = employees[employeeId];
         //assert(employee.id != 0x0);
         
-        totalSalary -= employees[employeeId].salary;
+        totalSalary = totalSalary.sub(employees[employeeId].salary);
         _partialPaid(employee);
-        employees[employeeId].salary = salary * 1 ether;
-        totalSalary += employees[employeeId].salary;
+        employees[employeeId].salary = salary.mul(1 ether);
+        totalSalary = totalSalary.add(employees[employeeId].salary);
         employees[employeeId].lastPayday = now;
     }
 
@@ -117,7 +121,7 @@ contract Payroll is Ownable {
         var employee = employees[msg.sender];
         //assert(employee.id != 0x0);
         
-        uint nextPayday = employee.lastPayday + payDuration;
+        uint nextPayday = employee.lastPayday.add(payDuration);
         assert (nextPayday <= now);
         
         employees[msg.sender].lastPayday = nextPayday;
