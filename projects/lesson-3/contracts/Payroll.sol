@@ -23,7 +23,7 @@ contract Payroll is Ownable {
         uint payment = employees[employeeId].salary * (now - employees[employeeId].lastPayday) / payDuration;
         employees[employeeId].id.transfer(payment);
     }    
-
+    
     //构造器
     function Payroll() payable public {
         
@@ -32,14 +32,16 @@ contract Payroll is Ownable {
 
     modifier checkEmployee(address employeeId) {
 
-        require(employees[employeeId].id != 0x0);
+        assert(employees[employeeId].lastPayday != 0);
         _;    
     }
+
+
     //增加员工
     function addEmployee(address employeeId, uint salary) public onlyOwner  {
         
         var employee = employees[employeeId];
-        assert(employee.lastPayay == 0);
+        assert(employee.lastPayday == 0);
         salary = salary.mul(1 ether);
         employees[employeeId] = Employee(employeeId, salary, now);
         totalSalary += salary;// TODO: your code here
@@ -51,10 +53,10 @@ contract Payroll is Ownable {
         delete employees[employeeId];// TODO: your code here
     }
 
-    function changePaymentAddress(address oldAddress, address newAddress) public checkEmployee(oldAddress) {
+    function changePaymentAddress(address oldAddress, address newAddress) public onlyOwner checkEmployee(oldAddress) {
         
         var employee = employees[newAddress];
-        require(employee.id == 0x0);
+        assert(employee.lastPayday == 0);
         var oldEmployee = employees[oldAddress];
         _partialPay(oldAddress);
         
