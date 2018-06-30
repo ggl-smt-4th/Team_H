@@ -19,21 +19,22 @@ contract Payroll {
         owner = msg.sender;
     }
 
-    function _findEmployee(address employeeAddress) private returns(Employee, uint) {
+    function _findEmployee(address employeeAddress) private view returns(int) {
 
         for (uint i = 0; i < employees.length; i++) {
 
             if (employees[i].employeeAddress == employeeAddress) {
 
-                return (employees[i], i);
+                return int(i);
             }
         }
+        
+        return -1;
     }
 
-    function _partialPay(Employee employee) private {
-
-        uint payment = employee.salary * (now - employee.lastPayDay) / payDuration;
-        employee.employeeAddress.transfer(payment);
+    function _partialPay(uint employeeIndex) private {
+        uint payment = employees[employeeIndex].salary * (now - employees[employeeIndex].lastPayDay) / payDuration;
+        employees[employeeIndex].employeeAddress.transfer(payment);
     }
 
     //转入用于支付薪酬的gas进合约
@@ -44,8 +45,9 @@ contract Payroll {
 
     //计算剩余资金足以支付的周期
     function calculateRunway() public view returns(uint) {
-
-        return this.balance / totalSalary;
+        
+        require(employees.length > 0);
+        return address(this).balance / totalSalary;
     }
 
     //是否有足够支付下一周期的资金
@@ -57,28 +59,33 @@ contract Payroll {
     //支付薪水
     function getPaid() {
 
-        var (employee, index) = _findEmployee(msg.sender);
-        assert(employee.employeeAddress != 0x0);
-
-        uint nextPayDay = employee.lastPayDay + payDuration;
+        int i = _findEmployee(msg.sender);
+        assert(i > -1);
+        
+        uint index = uint(i);
+        uint nextPayDay = employees[index].lastPayDay + payDuration;
         assert(nextPayDay < now);
     //修改-0628
         employees[index].lastPayDay = nextPayDay;
-        employees[index].employeeAddress.transfer(employee.salary);
+        employees[index].employeeAddress.transfer(employees[index].salary);
     }
 
     function updateEmployee(address employeeAddress, uint salary) {
 
         require(msg.sender == owner);
 
-        var (employee, index) = _findEmployee(employeeAddress);
-        assert(employee.employeeAddress != 0x0);
-
-        _partialPay(employee);
-        totalSalary -= employee.salary;
-        employee.salary = salary;
-        totalSalary += salary;
-        employee.lastPayDay = now;
+        int index = _findEmployee(employeeAddress);
+        assert(index > -1);
+    
+        uint i = uint(index);
+        _partialPay(i);
+        uint oldSalary = employees[i].salary;
+        
+        salary = salary * 1 ether;
+        totalSalary -= employees[i].salary;
+        employees[i].salary = salary;
+        employees[i].lastPayDay = now; 
+        totalSalary += salary - oldSalary;
 
     }
 
@@ -86,23 +93,24 @@ contract Payroll {
     function addEmployee(address employeeAddress, uint salary) public {
         require(msg.sender == owner);
 
-        var(employee, index) = _findEmployee(employeeAddress);
-        assert(employee.employeeAddress == 0x0);
-
-        employees.push(Employee(employeeAddress, salary * 1 ether, now));
+        int i = _findEmployee(employeeAddress);
+        assert(i == -1);
+        salary = salary * 1 ether;
+        employees.push(Employee(employeeAddress, salary, now));
         totalSalary += salary;// TODO: your code here
     }
 
     //移除元组中的员工
     function removeEmployee(address employeeAddress) public {
         require(msg.sender == owner);
-        var(employee, index) = _findEmployee(employeeAddress);
-        assert(employee.employeeAddress != 0x0);
+        int index = _findEmployee(employeeAddress);
+        assert(index > -1);
 
-        _partialPay(employee);
-        totalSalary -= employee.salary;
-        delete employees[index];
-        employees[index] = employees[employees.length -1];
+        uint i = uint(index);
+        _partialPay(i);
+        totalSalary -= employees[i].salary;
+        delete employees[i];
+        employees[i] = employees[employees.length -1];
         employees.length -= 1;
 
             }
