@@ -22,9 +22,9 @@ contract Payroll is Ownable {
     //address owner;
     mapping(address => Employee) public employees;
 
-    //function Payroll() payable public {
+    function Payroll() payable public {
     //    owner = msg.sender;
-    //}
+    }
     
     //modifier onlyOwner {
     //    require(msg.sender == owner);
