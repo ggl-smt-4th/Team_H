@@ -23,7 +23,7 @@ contract Payroll is Ownable {
         uint payment = employees[employeeId].salary * (now - employees[employeeId].lastPayday) / payDuration;
         employees[employeeId].id.transfer(payment);
     }    
-
+    
     //构造器
     function Payroll() payable public {
         
@@ -32,16 +32,19 @@ contract Payroll is Ownable {
 
     modifier checkEmployee(address employeeId) {
 
-        require(employees[employeeId].id != 0x0);
+        assert(employees[employeeId].lastPayday != 0);
         _;    
     }
+
+
     //增加员工
     function addEmployee(address employeeId, uint salary) public onlyOwner  {
-
-        require(employees[employeeId].id == 0x0);
-
-        employees[employeeId] = Employee(employeeId, salary * 1 ether , now);
-        totalSalary += salary * 1 ether;// TODO: your code here
+        
+        var employee = employees[employeeId];
+        assert(employee.lastPayday == 0);
+        salary = salary.mul(1 ether);
+        employees[employeeId] = Employee(employeeId, salary, now);
+        totalSalary += salary;// TODO: your code here
     }
 
     function removeEmployee(address employeeId) public checkEmployee(employeeId) onlyOwner {
@@ -50,12 +53,15 @@ contract Payroll is Ownable {
         delete employees[employeeId];// TODO: your code here
     }
 
-    function changePaymentAddress(address newAddress) public checkEmployee(msg.sender) {
+    function changePaymentAddress(address oldAddress, address newAddress) public onlyOwner checkEmployee(oldAddress) {
         
-        require(employees[newAddress].id == 0x0);
-        var oldEmployee = employees[msg.sender];
-        employees[newAddress] = Employee(newAddress, oldEmployee.salary, oldEmployee.lastPayday);
-        delete employees[msg.sender];// TODO: your code here
+        var employee = employees[newAddress];
+        assert(employee.lastPayday == 0);
+        var oldEmployee = employees[oldAddress];
+        _partialPay(oldAddress);
+        
+        employees[newAddress] = Employee(newAddress, oldEmployee.salary, now);
+        delete employees[oldAddress];// TODO: your code here
     }
 
     function updateEmployee(address employeeId, uint salary) public checkEmployee(employeeId) onlyOwner {
