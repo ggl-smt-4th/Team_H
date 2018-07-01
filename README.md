@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+Team_H
+=======
 ### 智能合约开发课程项目
 
 * 各个课程对应的代码在 projects 目录中
@@ -78,3 +81,4 @@
     $ git push origin master
     ```
 
+>>>>>>> 264cdd001c574c77130ecf708f5aad35fdefe41a
