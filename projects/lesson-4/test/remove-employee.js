@@ -50,7 +50,7 @@ contract('Payroll', (accounts) => {
       return payroll.employees.call(employee2);
     }).then((e) => {
       let employeeSalary = e[1]; // salary
-      //assert.equal(employeeSalary.toNumber(), 0, "Salary should clean");
+      assert.equal(employeeSalary.toNumber(), 0, "Salary should clean");
       return payroll.employees.call(employee);
     }).then((e) => {
       let employeeSalary = e[1]; // salary
