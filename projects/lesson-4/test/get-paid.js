@@ -5,6 +5,7 @@ var Payroll = artifacts.require("./Payroll.sol");
 // function: after pay duration, get paid once, otherwise no paid
 // Pay currect case: check contract balance(new=old-salary) 
 //       and employee balance(new = old+salary-gasCost)
+//       lastPayDay(new = old + duration)
 // Cases type: same as liao
 
 
@@ -23,9 +24,14 @@ contract('Payroll', function (accounts) {
     var contractBalance;
     var employeeBalance;
     var gasPrice = 20000000000;
+    var employeeAddTime;
     return Payroll.new.call(owner, {from: owner, value: web3.toWei(fund, 'ether')}).then(instance => {
       payroll = instance;
       return payroll.addEmployee(employee, salary, {from: owner});
+    }).then(() => {
+      return  payroll.employees.call(employee);
+    }).then((e) => {
+      employeeAddTime = e[2]; // time 
     }).then(() => {
       return web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [payDuration], id: 0});
     }).then(() => {
@@ -41,6 +47,11 @@ contract('Payroll', function (accounts) {
       //console.log("gas price: "+ gasPrice);
       assert.equal(contractBalanceNow, contractBalance - web3.toWei(salary, 'ether'), "Contract value should recude exact as the salary");
       assert.equal(employeeBalanceNow, Number(employeeBalance)+Number(web3.toWei(salary,'ether'))-Number(gasCost), "employeeBalanceNow = employeeBalanceOld+salary-gasCost");
+    }).then(() => {
+      return  payroll.employees.call(employee);
+    }).then((e) => {
+      let employeeLastAddTime = e[2]; // time 
+      assert.equal(employeeLastAddTime.toNumber(), employeeAddTime.toNumber()+Number(30*86400), "Last Pay time not increas correctly");
     });
   });
 
