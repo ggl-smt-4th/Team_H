@@ -58,4 +58,12 @@ contract('Payroll', (accounts) => {
     });
   });
 
+  it("2.e Test removeEmployee() function: employee not existed", () => {
+    return payroll.removeEmployee(guest, {from: owner}).then(() => {
+      assert(false, "Should not be successful");
+    }).catch(error => {
+      assert.include(error.toString(), "Error: VM Exception", "Cannot call removeEmployee() for a non existed employee");
+    });
+  });
+
 });
