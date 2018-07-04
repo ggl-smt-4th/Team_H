@@ -49,7 +49,7 @@ class EmployeeList extends Component {
 
   componentDidMount() {
     const { payroll, account, web3 } = this.props;
-    payroll.checkInfo.call({
+    payroll.getEmployeeInfo.call({
       from: account
     }).then((result) => {
       const employeeCount = result[2].toNumber();
@@ -65,15 +65,87 @@ class EmployeeList extends Component {
   }
 
   loadEmployees(employeeCount) {
+    const { payroll, account, web3 } = this.props;
+    const requests = [];
+
+    for(let index = 0; index<employeeCount; index++){
+      requests.push(payroll.checkEmployee.call( index, {
+        from: account
+      }));
+    }
+
+    Promise.all(requests)
+        .then(values => {
+          const employees = values.map(value => ({
+            key: value[0],
+            address: value[0],
+            salary: web3.fromWei(value[1].toNumber()),
+            lastPaidDate: new Date(value[2].toNumber() * 1000).toString()
+          }));
+
+          this.setState({
+            employees,
+            loading: false
+          })
+        });
   }
 
   addEmployee = () => {
+    const { payroll, account } = this.props;
+    const { address, salary, employees} = this.state;
+    payroll.addEmployee(address, salary, {
+      from: account,
+    }).then(() => {
+      const newEmployee = {
+        address,
+        salary,
+        key: address,
+        lastPaidDay: new Date().toString()
+      }
+
+      this.setState({
+        address: '',
+        salary: '',
+        showModal: false,
+        employees: employees.concat([newEmployee])
+      });
+    });
+
   }
 
   updateEmployee = (address, salary) => {
+    const { payroll, account } = this.props;
+    const { employees} = this.state;
+    payroll.updateEmployee(address, salary, {
+      from: account,
+    }).then(() => {
+      this.setState({
+        employees: employees.map((employee) => {
+          if (employee.address === address) {
+            employee.salary = salary;
+          }
+
+          return employees;
+        })
+      });
+    }).catch(() => {
+      message.error('not enough money');
+    });
   }
 
   removeEmployee = (employeeId) => {
+    const { payroll, account } = this.props;
+    const { employees} = this.state;
+    payroll.removeEmployee(employeeId, {
+      from: account,
+    }).then((result) => {
+      this.setState({
+        employees: employees.filter((employee) => employee.address !== employees[employeeId].address)
+
+      });
+    }).catch(() => {
+      message.error('not enough money');
+    });
   }
 
   renderModal() {
