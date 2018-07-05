@@ -6,6 +6,7 @@ import { Layout, Menu, Spin, Alert } from 'antd';
 
 import Employer from './components/Employer';
 import Employee from './components/Employee';
+import Common from './components/Common'; //import component which serve dif function
 
 import 'antd/dist/antd.css';
 import './App.css';
@@ -58,25 +59,26 @@ class App extends Component {
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      this.setState({
-        account: accounts[0],
+      this.setState({ //
+        accounts,
+        selectedAccount: accounts[0],//account selected
       });
       Payroll.deployed().then((instance) => {
         PayrollInstance = instance
         this.setState({
-          payroll: instance
+          payroll: instance //define payroll state(setState) as the instance
         });
       })
     })
   }
-
+//////
   onSelectTab = ({key}) => {
     this.setState({
       mode: key
     });
   }
-
-  renderContent = () => {
+//////
+  renderContent() {
     const { account, payroll, web3, mode } = this.state;
 
     if (!payroll) {
