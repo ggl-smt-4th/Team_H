@@ -12,12 +12,38 @@ class Employer extends Component {
   componentDidMount() {
     this.checkEmployee();
   }
-
+////check info of employee
   checkEmployee = () => {
-  }
+    const { payroll, employee, web3} = this.props;
+    payroll.employees.call(employee,{
+      from:employee,
+      gas:1000000
+    }).then((result) => {
+      console.log(result)
+      this.setState({
+        salary:web3.fromWei(result[1].toNumber()),
+        lastPaidDate:new Date(result[2].toNumber * 1000)
+      });
+    });
+  
 
+    web3.eth.getBalance(employee,(err,result) => {
+    this.setState({
+      balance: web3.fromWei(result.toNumber())
+    });
+  })
+}
+////
   getPaid = () => {
+    const { payroll, employee } = this.props;
+    payroll.getPaid({
+      from:employee,
+      gas:1000000
+    }).then((result) => {
+      alert('you have been paid the salary');
+    });
   }
+  
 
   renderContent() {
     const { salary, lastPaidDate, balance } = this.state;
@@ -33,7 +59,7 @@ class Employer extends Component {
             <Card title="薪水">{salary} Ether</Card>
           </Col>
           <Col span={8}>
-            <Card title="上次支付">{lastPaidDate}</Card>
+            <Card title="上次支付">{lastPaidDate.toString()}</Card>
           </Col>
           <Col span={8}>
             <Card title="帐号金额">{balance} Ether</Card>
@@ -60,8 +86,8 @@ class Employer extends Component {
         <h2>个人信息</h2>
         {this.renderContent()}
       </Layout >
-    );
+      );
+    }
   }
-}
 
 export default Employer

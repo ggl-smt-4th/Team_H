@@ -6,7 +6,7 @@ import EmployeeList from './EmployeeList';
 
 const { Content, Sider } = Layout;
 
-class Employer extends Component {
+class Employer extends Component  {
   constructor(props) {
     super(props);
 
@@ -39,15 +39,15 @@ class Employer extends Component {
     if (owner !== account) {
       return <Alert message="你没有权限" type="error" showIcon />;
     }
-
-    switch(mode) {
+  }
+ /*   switch(mode) {
       case 'fund':
         return <Fund account={account} payroll={payroll} web3={web3} />
       case 'employees':
         return <EmployeeList account={account} payroll={payroll} web3={web3} />
     }
   }
-
+*/
   render() {
     return (
       <Layout style={{ padding: '24px 0', background: '#fff'}}>

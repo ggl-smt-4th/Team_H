@@ -45,6 +45,14 @@ class EmployeeList extends Component {
         <a href="#">Delete</a>
       </Popconfirm>
     );
+
+    columns[4].render = (text,record) => {
+      return(
+          <Popconfirm title="你确定要删除这个员工吗?" onConfirm={() => this.removeEmployee(record.address)} >
+              <a href="#">删除</a>
+          </Popconfirm> 
+      )
+  }
   }
 
   componentDidMount() {
@@ -65,15 +73,85 @@ class EmployeeList extends Component {
   }
 
   loadEmployees(employeeCount) {
+    const { payroll, account, web3 } = this.props;
+    const requests = [];
+
+    for (let index = 0; index<= employeeCount; index++) {
+      requests.push(payroll.checkEmployee.call(index,{
+        from: account
+      }));
+    }
+
+    Promise.all(requests)
+      .then(values =>{
+        const employees = values.map(value => ({
+          key: value[0],
+          address: value[0],
+          salary: web3.fromWei(value[1].toNumber()),
+          lastPaidDay: new Date(value[2].toNumber() * 1000).toString(),
+          balance:web3.fromWei(web3.eth.getBalance(value[0]))
+          
+        }));
+
+        this.setState({
+          employees,
+
+        })
+      })
   }
 
   addEmployee = () => {
-  }
+    const {payroll,account,web3} = this.props
+    const {address,salary,employees} = this.state
+    // console.log(typeof(address),address)
+    payroll.addEmployee(address,salary,{from:account,gas:1000000}).then(()=>{
+        const newEmployee = {
+            address,salary,key:address,laspPaidDay:new Date().toString(),balance:web3.fromWei(web3.eth.getBalance(address))
+        }
+
+        this.setState({
+            address:'',
+            salary:'',
+            showModel:false,
+            employees:employees.concat([newEmployee])
+        })
+        message.success("添加员工成功!!!")
+    })
+}
+
+  
 
   updateEmployee = (address, salary) => {
+    const {payroll,account} = this.props
+    const {employees} = this.state
+    payroll.updateEmployee(address,salary,{from:account,gas:1000000}).then(()=>{
+
+        this.setState({
+            employees:employees.map((employee) =>{
+                if (employee.address === address){
+                    employee.salary = salary
+                }
+
+                return employee
+            })
+        })
+        message.success("添加更新员工工资!!!")
+    }).catch(()=>{
+        message.error("合约里的足够的余额来更新员工信息!!!")
+    })
   }
 
   removeEmployee = (employeeId) => {
+    const {payroll,account} = this.props
+    const {employees} = this.state
+    payroll.removeEmployee(employeeId,{from:account,gas:1000000}).then(()=>{
+        this.setState({
+            employees:employees.filter(employee => employee.address !== employeeId)
+        })
+        message.success("已成功删除员工!!!")
+    }).catch(()=>{
+        message.error("合约里的足够的余额删除员工!!!")
+    })
   }
 
   renderModal() {
@@ -122,7 +200,7 @@ class EmployeeList extends Component {
           columns={columns}
         />
       </div>
-    );
+    )
   }
 }
 
