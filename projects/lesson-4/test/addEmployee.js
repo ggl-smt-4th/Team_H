@@ -19,7 +19,7 @@ instance，然后我们调用了addEmployee方程并将参数传入
 
 */
 //Test01:合约所有者call
-  it("1、合约所有者调用addEmployee()", function () {
+  it("1.1-合约所有者调用addEmployee()", function () {
     var payroll;
   
     return Payroll.new().then(instance => {
@@ -27,20 +27,11 @@ instance，然后我们调用了addEmployee方程并将参数传入
       console.log("合约所有者调用addEmployee()");
       console.log("设置薪酬为1ether");
       return payroll.addEmployee(employee, salary, {from: owner});//it's resolve
-    }).then(function() {
-      console.log("操作结果：成功!!");
-      console.log("检测地址 employees['"+employee+"']");
-      return payroll.employees.call(employee);
-    }).then(
-      function(storedData) {
-        console.log("操作成功，当前添加的账户是：",storedData[0]);
-        console.log("账户工资：",web3.fromWei(storedData[1].toNumber(), 'ether'),'ether');
-  
     });
   });
 
 //Test02:传入负值的薪酬
-it("测试传入负的薪酬", function () {
+it("1.2-测试传入负的薪酬", function () {
   var payroll;
   return Payroll.new().then(instance => {
     payroll = instance;
@@ -59,12 +50,12 @@ it("测试传入负的薪酬", function () {
 */
     return payroll.addEmployee(employee, -salary, {from: owner});
   }).then(assert.fail).catch(error => {
-    assert.include(error.toString(), "Error: VM Exception", "Wrong!");
+    assert.include(error.toString(), "Error: VM Exception", "Wrong!"); //error.name = "Error:VM Exception" error.message = "Wrong!"
   });
 });
 
 //Test03：合约中employeeCall
-it("测试员工调用addEmployee", function () {
+it("1.3-测试员工调用addEmployee", function () {
   var payroll;
   return Payroll.new().then(function (instance) {
     payroll = instance;
@@ -80,7 +71,7 @@ it("测试员工调用addEmployee", function () {
 
 
 //Test04:合约访问者call
-it("测试访客调用addEmployee", function () {
+it("1.4-测试访客调用addEmployee", function () {
   var payroll;
   return Payroll.new().then(function (instance) {
     payroll = instance;
@@ -90,46 +81,6 @@ it("测试访客调用addEmployee", function () {
     assert(false,"false");
   }).catch(error => {
     assert.include(error.toString(),"Error: VM Exception", "wrong!");
-  });
-});
-
-it("2、removeEmployee函数", function() {
-  return Payroll.deployed().then(function(instance) {
-    payroll = instance;
-    console.log("删除账号：",employee);
-    return payroll.removeEmployee(employee,{from: accounts[0]});
-  }).then(function(storedData) {
-    console.log("地址删除地功");
-    console.log("检测地址 employees['"+employee+"']");
-    return payroll.employees.call(employee); 
-  }).then(function(storedData) {
-    console.log("检测结果：");
-    console.log("账户地址：",storedData[0]);
-    console.log("账户工资：",web3.fromWei(storedData[1].toNumber(), 'ether'),'ether');
-    console.log("上次支付时间：",storedData[2].toNumber());
-    var address = web3.toBigNumber(storedData[0]).toNumber();
-    assert.equal(address, 0, "测试失败！");   
-  });
-});
-
-
-it("3、getPaid()函数", function() {
-  return Payroll.deployed().then(function(instance) {
-    payroll = instance;
-    console.log("3、getPaid()函数");
-    console.log("RPC系统时间已经过了10秒");
-    web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [10], id: 0});
-    console.log("领工资账号：",employee);
-    return payroll.getPaid({from: employee});
-  }).then(function() {
-    console.log("操作结果：成功!!");
-    console.log("检测员工信息 employees['"+employee+"']");
-    return payroll.employees.call(employee);
-  }).then(function(storedData) {
-    console.log("检测结果:");
-    console.log("账户地址：",storedData[0]);
-    console.log("账户工资：",web3.fromWei(storedData[1].toNumber(), 'ether'),'ether');
-    console.log("上次支付时间：",storedData[2].toNumber());
   });
 });
 });
